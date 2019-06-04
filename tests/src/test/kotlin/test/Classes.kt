@@ -62,6 +62,7 @@ interface Methods {
     fun stringResult(s: String): String
     fun nullableStringResult(): String?
     fun builderMethod(): Methods
+    fun varargBooleanResult(vararg values: String): Boolean
 
     fun nonDefaultReturnType(): ExtraInterface
 }
@@ -73,6 +74,23 @@ abstract class ThrowingConstructor {
     constructor() {
         error("Error in constructor")
     }
+}
+
+abstract class ThrowingConstructorWithArgument {
+
+    constructor(s: String) {
+        error("Error in constructor: $s")
+    }
+}
+
+abstract class NonThrowingConstructorWithArgument {
+
+    constructor() {
+        error("Error in constructor")
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    constructor(s: String)
 }
 
 interface GenericMethods<T> {

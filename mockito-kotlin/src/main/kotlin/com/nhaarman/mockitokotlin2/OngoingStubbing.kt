@@ -29,6 +29,7 @@ import org.mockito.Mockito
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 import org.mockito.stubbing.OngoingStubbing
+import kotlin.DeprecationLevel.ERROR
 import kotlin.reflect.KClass
 
 
@@ -37,7 +38,8 @@ import kotlin.reflect.KClass
  *
  * Alias for [Mockito.when].
  */
-fun <T> whenever(methodCall: T): OngoingStubbing<T> {
+@Suppress("NOTHING_TO_INLINE")
+inline fun <T> whenever(methodCall: T): OngoingStubbing<T> {
     return Mockito.`when`(methodCall)!!
 }
 
@@ -62,7 +64,7 @@ fun <T> OngoingStubbing<T>.doReturn(t: T, vararg ts: T): OngoingStubbing<T> {
 /**
  * Sets consecutive return values to be returned when the method is called.
  */
-inline infix fun <reified T> OngoingStubbing<T>.doReturn(ts: List<T>): OngoingStubbing<T> {
+inline infix fun <reified T> OngoingStubbing<T>.doReturnConsecutively(ts: List<T>): OngoingStubbing<T> {
     return thenReturn(
           ts[0],
           *ts.drop(1).toTypedArray()

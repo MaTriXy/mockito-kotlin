@@ -26,7 +26,7 @@
 package com.nhaarman.mockitokotlin2
 
 import com.nhaarman.mockitokotlin2.internal.createInstance
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.mockito.InOrder
 import org.mockito.Mockito
 import org.mockito.verification.VerificationAfterDelay
@@ -53,6 +53,16 @@ fun <T> verifyBlocking(mock: T, f: suspend T.() -> Unit) {
     runBlocking { m.f() }
 }
 
+/**
+ * Verifies certain behavior happened at least once / exact number of times / never.
+ *
+ * Warning: Only one method call can be verified in the function.
+ * Subsequent method calls are ignored!
+ */
+fun <T> verifyBlocking(mock: T, mode: VerificationMode, f: suspend T.() -> Unit) {
+    val m = Mockito.verify(mock, mode)
+    runBlocking { m.f() }
+}
 /**
  * Verifies certain behavior happened at least once / exact number of times / never.
  *
@@ -192,7 +202,7 @@ fun inOrder(vararg mocks: Any): InOrder {
  *
  * Alias for [Mockito.inOrder].
  */
-fun inOrder(
+inline fun inOrder(
     vararg mocks: Any,
     evaluation: InOrder.() -> Unit
 ) {
@@ -241,7 +251,13 @@ If you are trying to verify an argument to be null, use `isNull()`.
 If you are using `check` as part of a stubbing, use `argThat` or `argForWhich` instead.
 """.trimIndent()
         )
-        predicate(arg)
-        true
+
+        try {
+            predicate(arg)
+            true
+        } catch (e: Error) {
+            e.printStackTrace()
+            false
+        }
     } ?: createInstance(T::class)
 }
